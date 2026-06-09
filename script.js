@@ -319,6 +319,31 @@ document.addEventListener('DOMContentLoaded', () => {
             if (p.status === 'rejected') progressText = 'Rejected';
             if (p.status === 'completed') progressText = '<span style="color: #3b82f6;">Website is Complete! Please pay the remaining 50% fee to receive your source code and live link.</span>';
             
+            let finalPaymentHtml = '';
+            if (p.status === 'completed') {
+                const upiId = portfolioData.payment.upiId;
+                const name = encodeURIComponent(portfolioData.payment.payeeName);
+                const upiString = `upi://pay?pa=${upiId}&pn=${name}&am=${p.amount}&cu=INR`;
+                const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiString)}`;
+
+                finalPaymentHtml = `
+                    <div style="margin-top: 1.5rem; padding: 1.5rem; background: rgba(59, 130, 246, 0.1); border: 1px dashed var(--accent); border-radius: 8px;">
+                        <h4 style="margin-top: 0; color: white; text-align: center; font-size: 1.2rem;">Pay Remaining Balance: <span style="color: var(--accent);">₹${p.amount}</span></h4>
+                        <a href="${upiString}" class="btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 10px; background: #fff; color: #1f2937; margin-bottom: 1rem; text-decoration: none; padding: 0.8rem; border-radius: 8px;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                            <strong>Pay via GPay / PhonePe</strong>
+                        </a>
+                        <div style="display: flex; align-items: center; margin: 1rem 0;">
+                            <hr style="flex: 1; border-color: rgba(255,255,255,0.1);">
+                            <span style="padding: 0 1rem; color: var(--text-secondary); font-size: 0.85rem;">OR SCAN QR</span>
+                            <hr style="flex: 1; border-color: rgba(255,255,255,0.1);">
+                        </div>
+                        <img src="${qrCodeUrl}" alt="Final Payment QR" style="width: 150px; height: 150px; margin: 0 auto 0.5rem; display: block; border-radius: 8px; border: 3px solid white;">
+                        <p style="text-align: center; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0;">UPI ID: <strong>${upiId}</strong></p>
+                    </div>
+                `;
+            }
+
             html += `
                 <div style="background: #1e293b; padding: 1.5rem; border-radius: 8px; border: 1px solid #334155; margin-bottom: 1rem;">
                     <h3 style="margin-top: 0; color: #3b82f6;">${p.plan.charAt(0).toUpperCase() + p.plan.slice(1)} Website</h3>
@@ -327,6 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #334155;">
                         <p style="margin: 0; font-size: 0.9rem; color: #cbd5e1;">Project Progress: <strong>${progressText}</strong></p>
                     </div>
+                    ${finalPaymentHtml}
                 </div>
             `;
         });
