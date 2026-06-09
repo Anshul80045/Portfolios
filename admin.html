@@ -103,6 +103,7 @@
                     <div class="details">
                         <h3>${p.name} - ₹${p.amount} <span class="badge ${p.status}">${p.status}</span></h3>
                         <p><strong>Mobile:</strong> ${p.mobile} | <strong>Plan:</strong> ${p.plan}</p>
+                        <p style="background: rgba(255,255,255,0.05); padding: 0.75rem; border-radius: 6px; margin: 0.5rem 0; border-left: 3px solid #3b82f6;"><strong>Description:</strong> ${p.description}</p>
                         <p><em>${new Date(p.timestamp).toLocaleString()}</em></p>
                     </div>
                     ${isPending ? `<div class="actions">

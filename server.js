@@ -35,7 +35,7 @@ const verifyCustomer = (req, res, next) => {
 
 // 1. Customer Submits Payment & Registers Account
 app.post('/submit-payment', (req, res) => {
-    const { name, mobile, password, amount, plan } = req.body;
+    const { name, mobile, password, amount, plan, description } = req.body;
     
     // Create or update user
     let user = users.find(u => u.mobile === mobile);
@@ -54,6 +54,7 @@ app.post('/submit-payment', (req, res) => {
         mobile,
         amount,
         plan,
+        description: description || "No description provided.",
         status: 'pending',
         timestamp: new Date().toISOString()
     };

@@ -169,6 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     mobile: document.getElementById('mobile').value,
                     password: document.getElementById('password').value,
                     plan: document.getElementById('plan-selection').value,
+                    description: document.getElementById('project-details').value,
                     amount: window.currentAdvanceAmount
                 })
             });
