@@ -75,6 +75,22 @@ h1, h2, h3, h4 {
     letter-spacing: -1px;
 }
 
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.hamburger span {
+    width: 25px;
+    height: 3px;
+    background-color: var(--text-primary);
+    border-radius: 3px;
+    transition: var(--transition-fast);
+}
+
 .nav-links {
     display: flex;
     gap: 2rem;
@@ -647,10 +663,182 @@ footer {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .hero-title { font-size: 2.5rem; }
+    /* Navigation - Ultra Premium Sidebar */
+    .hamburger { display: flex; z-index: 2000; }
+    
+    .nav-links {
+        position: fixed;
+        top: 0;
+        right: -320px;
+        width: 280px; /* True sidebar width */
+        height: 100vh;
+        background: rgba(15, 23, 42, 0.95); /* Deep slate */
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 1.2rem;
+        transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease;
+        z-index: 1000;
+        padding: 6rem 2rem 2rem; /* Push content down past hamburger */
+        border-left: 1px solid rgba(255,255,255,0.08);
+        /* Advanced CSS: Box shadow acts as the dark overlay for the rest of the screen */
+        box-shadow: -10px 0 40px rgba(0,0,0,0.5), 0 0 0 100vw rgba(0,0,0,0);
+    }
+
+    .nav-links.active {
+        right: 0;
+        box-shadow: -10px 0 40px rgba(0,0,0,0.5), 0 0 0 100vw rgba(0,0,0,0.75);
+    }
+
+    .nav-links a {
+        font-size: 1.2rem;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        width: 100%;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        color: var(--text-primary);
+        
+        /* Animation prep */
+        opacity: 0;
+        transform: translateX(30px);
+        transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Staggered slide-in animations when active */
+    .nav-links.active a {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    
+    .nav-links.active a:nth-child(1) { transition-delay: 0.1s; }
+    .nav-links.active a:nth-child(2) { transition-delay: 0.15s; }
+    .nav-links.active a:nth-child(3) { transition-delay: 0.2s; }
+    .nav-links.active a:nth-child(4) { transition-delay: 0.25s; }
+    .nav-links.active a:nth-child(5) { transition-delay: 0.3s; }
+    .nav-links.active a:nth-child(6) { transition-delay: 0.35s; }
+    .nav-links.active a:nth-child(7) { transition-delay: 0.4s; }
+
+    /* Fix buttons inside the sidebar */
+    .nav-links a.btn-primary-small, 
+    .nav-links a.btn-secondary-small {
+        border-bottom: none;
+        text-align: center;
+        margin-top: 0.5rem;
+        margin-left: 0 !important; /* Override inline styles */
+        padding: 1rem !important;
+        border-radius: 8px;
+    }
+
+    /* Hamburger Animation */
+    .hamburger.active span:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+        background-color: var(--accent);
+    }
+    .hamburger.active span:nth-child(2) {
+        opacity: 0;
+    }
+    .hamburger.active span:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+        background-color: var(--accent);
+    }
+
+    /* Hero Section */
+    .hero-title { 
+        font-size: 2.8rem; 
+        line-height: 1.1; 
+        margin-bottom: 1rem; 
+    }
+    .hero-subtitle { font-size: 1.1rem; }
+    .hero-description { font-size: 1rem; padding: 0 0.5rem; }
+    
+    .profile-img-container {
+        width: 130px;
+        height: 130px;
+        margin-bottom: 2.5rem;
+        box-shadow: 0 10px 40px rgba(59, 130, 246, 0.3);
+    }
+    
+    .hero-actions {
+        flex-direction: column;
+        width: 100%;
+        padding: 0 1rem;
+        gap: 1.2rem;
+    }
+    .hero-actions .btn-primary, .hero-actions .btn-secondary {
+        width: 100%;
+        text-align: center;
+        padding: 1rem;
+        font-size: 1.1rem;
+    }
+
+    /* Layout & Sections */
+    .section {
+        padding: 4rem 1rem;
+    }
+    .section-title {
+        font-size: 2.2rem;
+    }
+    .section-subtitle {
+        margin-bottom: 3rem;
+        font-size: 0.95rem;
+    }
+
+    /* Timeline Mobile Fixes */
+    .timeline-item {
+        padding-left: 2rem;
+        margin-bottom: 2.5rem;
+    }
+    .timeline-item::before {
+        left: -5px;
+        width: 12px;
+        height: 12px;
+    }
+
+    /* Contact Form - Critical Fixes */
+    .contact-container {
+        padding: 0;
+    }
     .project-form {
         grid-template-columns: 1fr;
         padding: 1.5rem;
+        border-radius: 12px;
+        gap: 1.2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
-    .nav-links { display: none; }
+    
+    /* Ensure inputs NEVER overflow on mobile */
+    input, select, textarea {
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 16px; /* Prevents iOS zoom */
+        padding: 1rem;
+    }
+    
+    .file-upload-wrapper {
+        padding: 1.5rem 1rem;
+    }
+
+    /* Pricing Cards */
+    .plans-grid {
+        gap: 1.5rem;
+    }
+    .plan-card {
+        padding: 2rem 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+    .plan-price {
+        font-size: 2.2rem;
+    }
+    
+    /* Modals */
+    .modal-content {
+        padding: 2rem 1.5rem;
+        width: 90%;
+        max-width: 350px;
+        border-radius: 16px;
+    }
 }
