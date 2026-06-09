@@ -113,6 +113,15 @@ app.post('/admin/approve/:id', verifyAdmin, (req, res) => {
     res.json({ message: "Payment approved successfully" });
 });
 
+// 5. Admin Marks Project as Completed
+app.post('/admin/complete/:id', verifyAdmin, (req, res) => {
+    const payment = payments.find(p => p.id === req.params.id);
+    if (!payment) return res.status(404).json({ error: "Not found" });
+    
+    payment.status = 'completed';
+    res.json({ message: "Project marked as completed" });
+});
+
 // 5. Admin Rejects Payment
 app.post('/admin/reject/:id', verifyAdmin, (req, res) => {
     const payment = payments.find(p => p.id === req.params.id);

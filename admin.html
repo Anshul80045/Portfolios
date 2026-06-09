@@ -15,6 +15,7 @@
         .badge { padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
         .pending { background: #f59e0b22; color: #f59e0b; border: 1px solid #f59e0b; }
         .approved { background: #10b98122; color: #10b981; border: 1px solid #10b981; }
+        .completed { background: #3b82f622; color: #3b82f6; border: 1px solid #3b82f6; }
         .actions { display: flex; gap: 1rem; }
         button { border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .btn-approve { background: #10b981; color: white; }
@@ -86,6 +87,18 @@
             }
         }
 
+        async function completeProject(id) {
+            try {
+                await fetch(`${API_BASE_URL}/admin/complete/${id}`, {
+                    method: 'POST',
+                    headers: { 'x-admin-password': adminPassword }
+                });
+                fetchPayments();
+            } catch (err) {
+                alert("Error marking project as completed");
+            }
+        }
+
         function renderPayments(payments) {
             const list = document.getElementById('payments-list');
             list.innerHTML = '';
@@ -97,6 +110,7 @@
 
             payments.forEach(p => {
                 const isPending = p.status === 'pending';
+                const isApproved = p.status === 'approved';
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
@@ -106,9 +120,10 @@
                         <p style="background: rgba(255,255,255,0.05); padding: 0.75rem; border-radius: 6px; margin: 0.5rem 0; border-left: 3px solid #3b82f6;"><strong>Description:</strong> ${p.description}</p>
                         <p><em>${new Date(p.timestamp).toLocaleString()}</em></p>
                     </div>
-                    ${isPending ? `<div class="actions">
-                        <button class="btn-approve" onclick="approve('${p.id}')">I Got The Payment</button>
-                    </div>` : ''}
+                    <div class="actions">
+                        ${isPending ? `<button class="btn-approve" onclick="approve('${p.id}')">I Got The Payment</button>` : ''}
+                        ${isApproved ? `<button style="background: #3b82f6; color: white;" onclick="completeProject('${p.id}')">Website Completed Successfully</button>` : ''}
+                    </div>
                 `;
                 list.appendChild(card);
             });

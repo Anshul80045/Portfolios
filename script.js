@@ -309,13 +309,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let html = '';
         payments.forEach(p => {
-            let statusColor = p.status === 'pending' ? '#f59e0b' : (p.status === 'approved' ? '#10b981' : '#ef4444');
-            let progressText = p.status === 'pending' ? 'Waiting for Developer Approval' : (p.status === 'approved' ? 'Development Started (Please pay 50% advance to continue)' : 'Rejected');
+            let statusColor = '#f59e0b';
+            if (p.status === 'approved') statusColor = '#10b981';
+            if (p.status === 'rejected') statusColor = '#ef4444';
+            if (p.status === 'completed') statusColor = '#3b82f6';
+            
+            let progressText = 'Waiting for Developer to Verify Payment';
+            if (p.status === 'approved') progressText = 'Development Started (The remaining 50% payment is due when the website is completely finished)';
+            if (p.status === 'rejected') progressText = 'Rejected';
+            if (p.status === 'completed') progressText = '<span style="color: #3b82f6;">Website is Complete! Please pay the remaining 50% fee to receive your source code and live link.</span>';
             
             html += `
                 <div style="background: #1e293b; padding: 1.5rem; border-radius: 8px; border: 1px solid #334155; margin-bottom: 1rem;">
                     <h3 style="margin-top: 0; color: #3b82f6;">${p.plan.charAt(0).toUpperCase() + p.plan.slice(1)} Website</h3>
-                    <p style="margin: 0.5rem 0; color: var(--text-secondary);">Processing Fee Paid: ₹${p.amount}</p>
+                    <p style="margin: 0.5rem 0; color: var(--text-secondary);">Advance Paid: ₹${p.amount}</p>
                     <p style="margin: 0.5rem 0; font-weight: bold;">Status: <span style="color: ${statusColor}; text-transform: uppercase;">${p.status}</span></p>
                     <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #334155;">
                         <p style="margin: 0; font-size: 0.9rem; color: #cbd5e1;">Project Progress: <strong>${progressText}</strong></p>
