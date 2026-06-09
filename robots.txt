@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://anshul-portfolio.onrender.com/sitemap.xml
