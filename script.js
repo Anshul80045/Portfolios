@@ -79,6 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let basePrice = portfolioData.plans['basic'].price; // Default
     let isUrgent = false;
+    window.currentAdvanceAmount = 0; // NEW GLOBAL VARIABLE
 
     // Scroll and Select Plan
     window.selectPlan = (planKey) => {
@@ -99,6 +100,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         estimatedPriceDisplay.textContent = `₹${total.toLocaleString()}`;
+        
+        // Calculate 50% advance
+        window.currentAdvanceAmount = total * 0.5;
+        document.getElementById('payment-fee-display').textContent = `₹${window.currentAdvanceAmount.toLocaleString()}`;
     }
 
     planSelect.addEventListener('change', calculatePrice);
@@ -127,18 +132,19 @@ document.addEventListener('DOMContentLoaded', () => {
     projectForm.addEventListener('submit', (e) => {
         e.preventDefault();
         
-        // Generate UPI URI
+        // Generate UPI URI using dynamic 50% advance
         const upiId = portfolioData.payment.upiId;
         const name = encodeURIComponent(portfolioData.payment.payeeName);
-        const amount = portfolioData.payment.processingFee.toFixed(2);
+        const amount = window.currentAdvanceAmount.toFixed(2);
         
         const upiString = `upi://pay?pa=${upiId}&pn=${name}&am=${amount}&cu=INR`;
         const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
         
         // Update Modal UI
+        document.getElementById('upi-intent-link').href = upiString;
         document.getElementById('upi-qr-code').src = qrCodeUrl;
         document.getElementById('upi-id-display').textContent = upiId;
-        document.getElementById('payment-fee-display').textContent = `₹${portfolioData.payment.processingFee}`;
+        document.getElementById('payment-fee-display').textContent = `₹${window.currentAdvanceAmount.toLocaleString()}`;
         
         // Show modal
         paymentModal.classList.add('active');
@@ -163,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     mobile: document.getElementById('mobile').value,
                     password: document.getElementById('password').value,
                     plan: document.getElementById('plan-selection').value,
-                    amount: portfolioData.payment.processingFee
+                    amount: window.currentAdvanceAmount
                 })
             });
 

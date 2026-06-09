@@ -155,13 +155,13 @@
                 <div class="pricing-summary full-width">
                     <h3>Estimated Price: <span id="estimated-price">₹0</span></h3>
                     <div class="payment-terms">
-                        <p class="warning-text">⚠️ <strong>Note:</strong> A non-refundable processing fee of <strong>₹20</strong> is mandatory to submit this request.</p>
-                        <p>After submission, we will notify you in a few days about your website. It is mandatory to pay <strong>50% of the total estimated fee</strong> before the development begins.</p>
+                        <p class="warning-text">⚠️ <strong>Note:</strong> A <strong>50% advance payment</strong> of the estimated price is required to begin development immediately.</p>
+                        <p>After submission and payment, you can track your project progress directly from your dashboard.</p>
                     </div>
                 </div>
 
                 <div class="form-actions full-width">
-                    <button type="submit" class="btn-primary btn-submit">Pay ₹20 & Submit Request</button>
+                    <button type="submit" id="main-submit-btn" class="btn-primary btn-submit">Pay 50% Advance & Submit</button>
                 </div>
             </form>
         </div>
@@ -170,18 +170,31 @@
     <!-- Payment Modal (QR Code & UTR) -->
     <div id="payment-modal" class="modal-overlay">
         <div class="modal-content">
-            <h2>Secure Payment</h2>
-            <p>Processing Fee: <strong id="payment-fee-display">₹20</strong></p>
+            <h2 style="margin-bottom: 0.5rem;">Complete Payment</h2>
+            <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid var(--accent); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">50% Advance Amount</p>
+                <strong id="payment-fee-display" style="font-size: 2.5rem; color: var(--text-primary); font-family: var(--font-heading);">₹0</strong>
+            </div>
             
             <div class="qr-payment-container">
-                <p>Scan with any UPI App (GPay, PhonePe, Paytm)</p>
-                <div class="qr-code-wrapper">
-                    <img id="upi-qr-code" src="" alt="UPI QR Code" style="width: 200px; height: 200px; margin: 1rem auto; display: block; border-radius: 8px; border: 4px solid white;">
+                <a href="#" id="upi-intent-link" class="btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 10px; background: #fff; color: #1f2937; margin-bottom: 1.5rem; text-decoration: none; padding: 1rem;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                    <strong>Pay via GPay / PhonePe / Paytm</strong>
+                </a>
+
+                <div style="display: flex; align-items: center; margin: 1rem 0;">
+                    <hr style="flex: 1; border-color: rgba(255,255,255,0.1);">
+                    <span style="padding: 0 1rem; color: var(--text-secondary); font-size: 0.9rem;">OR SCAN QR</span>
+                    <hr style="flex: 1; border-color: rgba(255,255,255,0.1);">
                 </div>
-                <p class="qr-instruction" style="font-size: 0.9rem; color: var(--text-secondary);">Or pay manually to: <strong id="upi-id-display"></strong></p>
+
+                <div class="qr-code-wrapper">
+                    <img id="upi-qr-code" src="" alt="UPI QR Code" style="width: 180px; height: 180px; margin: 0 auto 1rem; display: block; border-radius: 8px; border: 4px solid white;">
+                </div>
+                <p class="qr-instruction" style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0;">UPI ID: <strong id="upi-id-display"></strong></p>
             </div>
             <div class="payment-methods" style="margin-top: 1.5rem;">
-                <button class="btn-primary" id="btn-verify" onclick="processPayment()">I Have Paid</button>
+                <button class="btn-primary" id="btn-verify" onclick="processPayment()">I Have Paid Successfully</button>
                 <button class="btn-close" onclick="closeModal()" style="margin-top: 1rem;">Cancel</button>
             </div>
         </div>
@@ -192,9 +205,8 @@
         <div class="modal-content success-content">
             <div class="success-icon">✓</div>
             <h2>Payment Submitted!</h2>
-            <p style="font-size: 1.1rem; margin-bottom: 1rem;">Please check your confirmation after sometime.</p>
-            <p>Thank you! Your new website is going to be developed.</p>
-            <p style="color: #f59e0b; font-weight: bold; margin-top: 1rem;">We will notify you tomorrow to complete the 50% advance payment before full development begins.</p>
+            <p style="font-size: 1.1rem; margin-bottom: 1rem;">Please check your dashboard for confirmation.</p>
+            <p>Thank you! Your advance payment has been received and development will begin shortly.</p>
             <button class="btn-primary" style="margin-top: 1.5rem;" onclick="closeSuccessModal()">Go to Dashboard</button>
         </div>
     </div>
