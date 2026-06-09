@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anshul Chandra - Full Stack Web Developer</title>
+    <meta name="description" content="Portfolio of Anshul Chandra, Full Stack Web Developer. Offering basic, standard, and premium website plans.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- Local CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Razorpay SDK -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">AC.</a>
+            <div class="nav-links">
+                <a href="#hero">Profile</a>
+                <a href="#education">Education</a>
+                <a href="#projects">Projects</a>
+                <a href="#plans">Plans</a>
+                <a href="#contact" id="nav-contact" class="btn-primary-small">Contact Us</a>
+                <a href="#" id="nav-login" class="btn-secondary-small" onclick="openLoginModal()" style="margin-left: 0.5rem; background: transparent; border: 1px solid #3b82f6; color: #3b82f6; padding: 0.5rem 1rem; border-radius: 6px; font-weight: 600; text-decoration: none;">Login</a>
+                <a href="#" id="nav-logout" class="btn-secondary-small" onclick="logout()" style="display: none; margin-left: 0.5rem; background: transparent; border: 1px solid #ef4444; color: #ef4444; padding: 0.5rem 1rem; border-radius: 6px; font-weight: 600; text-decoration: none;">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero-section">
+        <div class="hero-content">
+            <div class="profile-img-container">
+                <img id="hero-img" src="profile.jpg" alt="Profile Picture" class="profile-img">
+            </div>
+            <h1 id="hero-name" class="hero-title">Name</h1>
+            <h2 id="hero-role" class="hero-subtitle">Role</h2>
+            <p id="hero-desc" class="hero-description">Description</p>
+            <div class="hero-actions">
+                <a href="#projects" class="btn-secondary">View Work</a>
+                <a href="#plans" class="btn-primary">View Plans</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education Section -->
+    <section id="education" class="section">
+        <div class="section-container">
+            <h2 class="section-title">Education</h2>
+            <div id="education-list" class="education-timeline">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="section dark-section">
+        <div class="section-container">
+            <h2 class="section-title">Featured Projects</h2>
+            <div id="projects-grid" class="projects-grid">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Plans Section -->
+    <section id="plans" class="section">
+        <div class="section-container">
+            <h2 class="section-title">Investment Plans</h2>
+            <p class="section-subtitle">Choose the perfect plan for your next digital project.</p>
+            <div id="plans-grid" class="plans-grid">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section dark-section">
+        <div class="section-container contact-container">
+            <h2 class="section-title">Contact & Project Request</h2>
+            <p class="section-subtitle">Let's build something amazing together.</p>
+            
+            <form id="project-form" class="project-form">
+                <div class="form-group">
+                    <label for="name">Full Name *</label>
+                    <input type="text" id="name" required placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="mobile">Mobile Number *</label>
+                    <input type="tel" id="mobile" required placeholder="+91 9876543210">
+                </div>
+                <div class="form-group full-width">
+                    <label for="password">Create Password (For tracking your project later) *</label>
+                    <input type="password" id="password" required placeholder="Enter a secure password">
+                </div>
+                <div class="form-group">
+                    <label for="website-type">Website Type *</label>
+                    <select id="website-type" required>
+                        <option value="" disabled selected>Select Type</option>
+                        <option value="portfolio">Portfolio / Personal</option>
+                        <option value="business">Business / Corporate</option>
+                        <option value="ecommerce">E-Commerce</option>
+                        <option value="blog">Blog / News</option>
+                        <option value="custom">Custom Web App</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="urgency">How quickly do you need this? *</label>
+                    <select id="urgency" required>
+                        <option value="" disabled selected>Select Timeline</option>
+                        <option value="relaxed">Relaxed (15 days)</option>
+                        <option value="standard">Standard (10 days)</option>
+                        <option value="urgent">Urgent (Within 1 week) [+20% surcharge]</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="plan-selection">Selected Plan *</label>
+                    <select id="plan-selection" required>
+                        <option value="basic">Basic (5 Updates)</option>
+                        <option value="standard">Standard (5 Updates)</option>
+                        <option value="premium">Premium (Lifetime Free Updates)</option>
+                    </select>
+                </div>
+                <div class="form-group full-width">
+                    <label for="description">Website Description / Requirements *</label>
+                    <textarea id="description" required rows="5" placeholder="Please describe your vision, features needed, and any specific requirements..."></textarea>
+                </div>
+                <div class="form-group full-width">
+                    <label for="file-upload">Upload Files (Images, UI/UX References) - Optional</label>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="file-upload" multiple accept="image/*,.pdf,.doc,.docx">
+                        <div class="file-upload-text">Drag & drop files here or click to browse</div>
+                    </div>
+                    <ul id="file-list" class="file-list"></ul>
+                </div>
+                
+                <div class="pricing-summary full-width">
+                    <h3>Estimated Price: <span id="estimated-price">₹0</span></h3>
+                    <div class="payment-terms">
+                        <p class="warning-text">⚠️ <strong>Note:</strong> A non-refundable processing fee of <strong>₹20</strong> is mandatory to submit this request.</p>
+                        <p>After submission, we will notify you in a few days about your website. It is mandatory to pay <strong>50% of the total estimated fee</strong> before the development begins.</p>
+                    </div>
+                </div>
+
+                <div class="form-actions full-width">
+                    <button type="submit" class="btn-primary btn-submit">Pay ₹20 & Submit Request</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Payment Modal (QR Code & UTR) -->
+    <div id="payment-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Secure Payment</h2>
+            <p>Processing Fee: <strong id="payment-fee-display">₹20</strong></p>
+            
+            <div class="qr-payment-container">
+                <p>Scan with any UPI App (GPay, PhonePe, Paytm)</p>
+                <div class="qr-code-wrapper">
+                    <img id="upi-qr-code" src="" alt="UPI QR Code" style="width: 200px; height: 200px; margin: 1rem auto; display: block; border-radius: 8px; border: 4px solid white;">
+                </div>
+                <p class="qr-instruction" style="font-size: 0.9rem; color: var(--text-secondary);">Or pay manually to: <strong id="upi-id-display"></strong></p>
+            </div>
+            <div class="payment-methods" style="margin-top: 1.5rem;">
+                <button class="btn-primary" id="btn-verify" onclick="processPayment()">I Have Paid</button>
+                <button class="btn-close" onclick="closeModal()" style="margin-top: 1rem;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal-overlay">
+        <div class="modal-content success-content">
+            <div class="success-icon">✓</div>
+            <h2>Payment Submitted!</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 1rem;">Please check your confirmation after sometime.</p>
+            <p>Thank you! Your new website is going to be developed.</p>
+            <p style="color: #f59e0b; font-weight: bold; margin-top: 1rem;">We will notify you tomorrow to complete the 50% advance payment before full development begins.</p>
+            <button class="btn-primary" style="margin-top: 1.5rem;" onclick="closeSuccessModal()">Go to Dashboard</button>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 400px;">
+            <h2>Customer Login</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Log in to check your project status.</p>
+            <div class="form-group full-width" style="text-align: left; margin-bottom: 1rem;">
+                <label for="login-mobile">Mobile Number</label>
+                <input type="tel" id="login-mobile" placeholder="+91 9876543210" style="width: 100%;">
+            </div>
+            <div class="form-group full-width" style="text-align: left; margin-bottom: 1.5rem;">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" placeholder="Enter your password" style="width: 100%;">
+            </div>
+            <div class="payment-methods">
+                <button class="btn-primary" id="btn-login-submit" onclick="submitLogin()">Login</button>
+                <button class="btn-close" onclick="closeLoginModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Dashboard Section (Hidden by default) -->
+    <section id="customer-dashboard" class="section dark-section" style="display: none; min-height: 60vh;">
+        <div class="section-container" style="max-width: 800px; margin: 0 auto; text-align: center;">
+            <h2 class="section-title" id="dashboard-welcome">Welcome Back!</h2>
+            <p class="section-subtitle">Here is the status of your website projects.</p>
+            
+            <div id="dashboard-projects" style="margin-top: 2rem; text-align: left;">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; <span id="current-year"></span> Anshul Chandra. All rights reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

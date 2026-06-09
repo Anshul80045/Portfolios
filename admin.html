@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: white; margin: 0; padding: 2rem; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid #334155; padding-bottom: 1rem; }
+        .card { background: #1e293b; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
+        .details h3 { margin: 0 0 0.5rem 0; color: #3b82f6; }
+        .details p { margin: 0.25rem 0; color: #cbd5e1; font-size: 0.9rem; }
+        .badge { padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
+        .pending { background: #f59e0b22; color: #f59e0b; border: 1px solid #f59e0b; }
+        .approved { background: #10b98122; color: #10b981; border: 1px solid #10b981; }
+        .actions { display: flex; gap: 1rem; }
+        button { border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-approve { background: #10b981; color: white; }
+        .btn-approve:hover { background: #059669; }
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .login-box { background: #1e293b; padding: 2rem; border-radius: 8px; text-align: center; border: 1px solid #334155; }
+        .login-box input { padding: 0.75rem; border-radius: 4px; border: 1px solid #475569; background: #0f172a; color: white; margin-bottom: 1rem; width: 100%; }
+    </style>
+</head>
+<body>
+
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2>Admin Login</h2>
+            <input type="password" id="admin-pass" placeholder="Enter Password">
+            <button class="btn-approve" onclick="login()">Login</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Admin Dashboard</h1>
+            <button onclick="fetchPayments()" style="background: #334155; color: white;">Refresh</button>
+        </div>
+        <div id="payments-list">
+            <!-- Populated via JS -->
+        </div>
+    </div>
+
+    <script>
+        // IMPORTANT: Leave this as an empty string when the backend serves the frontend files!
+        const API_BASE_URL = '';
+        let adminPassword = "";
+
+        function login() {
+            adminPassword = document.getElementById('admin-pass').value;
+            document.getElementById('login-overlay').style.display = 'none';
+            fetchPayments();
+            // Auto refresh every 5 seconds
+            setInterval(fetchPayments, 5000);
+        }
+
+        async function fetchPayments() {
+            try {
+                const res = await fetch(`${API_BASE_URL}/admin/payments`, {
+                    headers: { 'x-admin-password': adminPassword }
+                });
+                if (!res.ok) {
+                    alert("Unauthorized!");
+                    document.getElementById('login-overlay').style.display = 'flex';
+                    return;
+                }
+                const payments = await res.json();
+                renderPayments(payments);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function approve(id) {
+            try {
+                await fetch(`${API_BASE_URL}/admin/approve/${id}`, {
+                    method: 'POST',
+                    headers: { 'x-admin-password': adminPassword }
+                });
+                fetchPayments();
+            } catch (err) {
+                alert("Error approving payment");
+            }
+        }
+
+        function renderPayments(payments) {
+            const list = document.getElementById('payments-list');
+            list.innerHTML = '';
+            
+            if(payments.length === 0) {
+                list.innerHTML = '<p>No payments yet.</p>';
+                return;
+            }
+
+            payments.forEach(p => {
+                const isPending = p.status === 'pending';
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="details">
+                        <h3>${p.name} - ₹${p.amount} <span class="badge ${p.status}">${p.status}</span></h3>
+                        <p><strong>Mobile:</strong> ${p.mobile} | <strong>Plan:</strong> ${p.plan}</p>
+                        <p><em>${new Date(p.timestamp).toLocaleString()}</em></p>
+                    </div>
+                    ${isPending ? `<div class="actions">
+                        <button class="btn-approve" onclick="approve('${p.id}')">I Got The Payment</button>
+                    </div>` : ''}
+                `;
+                list.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
