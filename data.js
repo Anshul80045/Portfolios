@@ -34,7 +34,7 @@ const portfolioData = {
       title: "Worker Salary Management App",
       description: "A comprehensive application for tracking employee attendance, managing salaries, and automating payroll generation.",
       image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&q=80",
-      link: "#"
+      link: "https://anshul80045.github.io/Worker-accountant/"
     },
     {
       title: "Social Media Dashboard",
