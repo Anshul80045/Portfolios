@@ -317,6 +317,41 @@ h1, h2, h3, h4 {
     margin-bottom: 0.5rem;
 }
 
+/* Reviews Section */
+.reviews-grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 2rem;
+    padding-bottom: 1.5rem;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Custom Webkit Scrollbar for Premium Feel */
+.reviews-grid::-webkit-scrollbar {
+    height: 6px;
+}
+.reviews-grid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+.reviews-grid::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 10px;
+}
+
+.review-card {
+    flex: 0 0 auto;
+    width: 350px;
+    scroll-snap-align: start;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 2rem;
+    transition: 0.3s;
+    backdrop-filter: blur(10px);
+}
+
 /* Projects Grid */
 .projects-grid {
     display: grid;
