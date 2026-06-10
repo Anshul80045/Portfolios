@@ -31,9 +31,9 @@ const portfolioData = {
       link: "#"
     },
     {
-      title: "Task Management App",
-      description: "A productivity app with drag-and-drop features, real-time sync, and team collaboration tools.",
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80",
+      title: "Worker Salary Management App",
+      description: "A comprehensive application for tracking employee attendance, managing salaries, and automating payroll generation.",
+      image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&q=80",
       link: "#"
     },
     {
