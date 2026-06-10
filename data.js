@@ -5,8 +5,8 @@
 const portfolioData = {
   profile: {
     name: "Anshul Chandra",
-    role: "Full Stack Web Developer",
-    description: "I build highly professional, dynamic, and responsive web applications. Let's turn your vision into reality.",
+    role: "Expert Web Developer & Full Stack Engineer",
+    description: "Hi, I'm Anshul, a professional web developer specializing in highly dynamic and responsive web applications. If you are looking to hire an expert freelance web developer, let's turn your vision into reality.",
     image: "profile.jpg" // We copied your profile picture here
   },
   education: [
