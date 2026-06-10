@@ -13,6 +13,37 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('hero-img').src = portfolioData.profile.image;
     document.title = `${portfolioData.profile.name} - ${portfolioData.profile.role}`;
 
+    // --- FETCH REVIEWS ---
+    async function loadReviews() {
+        try {
+            const res = await fetch(`${API_BASE_URL}/reviews`);
+            const reviews = await res.json();
+            const grid = document.getElementById('reviews-grid');
+            
+            if (reviews.length === 0) {
+                grid.innerHTML = '<p style="color: var(--text-secondary); grid-column: 1/-1; text-align: center;">Be the first to leave a review!</p>';
+                return;
+            }
+
+            grid.innerHTML = reviews.map(r => `
+                <div class="review-card">
+                    <div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+                    <p class="review-text">"${r.comment}"</p>
+                    <div class="review-author">
+                        <div class="review-avatar">${r.name.charAt(0).toUpperCase()}</div>
+                        <div>
+                            <strong>${r.name}</strong>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">${new Date(r.date).toLocaleDateString()}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } catch (e) {
+            console.error("Failed to load reviews", e);
+        }
+    }
+    loadReviews();
+
     // 2. Education Section
     const eduList = document.getElementById('education-list');
     portfolioData.education.forEach(edu => {
@@ -180,31 +211,85 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Save token and authenticate user locally
             localStorage.setItem('customerToken', data.token);
-            checkAuth();
-
-            // Switch from Payment to Success Modal
-            paymentModal.classList.remove('active');
+            localStorage.setItem('user_name', document.getElementById('name').value);
+            
+            closeModal();
+            const successModal = document.getElementById('success-modal');
             successModal.classList.add('active');
-
-            // Reset form
-            projectForm.reset();
-            document.getElementById('file-list').innerHTML = '';
-            calculatePrice();
-
-            btn.textContent = "I Have Paid";
-            btn.disabled = false;
+            
+            // Reload dashboard
+            checkAuth();
 
         } catch (error) {
             alert("Error: Could not connect to backend. Is node server.js running?");
-            btn.textContent = "I Have Paid";
+            btn.textContent = "I Have Paid Successfully";
             btn.disabled = false;
         }
     };
 
     window.closeSuccessModal = () => {
-        successModal.classList.remove('active');
-        // Because of Go To Dashboard button, ensure we check auth
-        checkAuth();
+        document.getElementById('success-modal').classList.remove('active');
+        document.getElementById('project-form').reset();
+    };
+
+    // --- REVIEWS LOGIC ---
+    let currentRating = 5;
+    const reviewModal = document.getElementById('review-modal');
+    
+    window.openReviewModal = () => {
+        reviewModal.classList.add('active');
+        // Reset stars
+        currentRating = 5;
+        document.querySelectorAll('#star-rating span').forEach(s => s.classList.add('active'));
+    };
+
+    window.closeReviewModal = () => {
+        reviewModal.classList.remove('active');
+    };
+
+    // Star interaction
+    document.querySelectorAll('#star-rating span').forEach(star => {
+        star.addEventListener('click', (e) => {
+            currentRating = parseInt(e.target.dataset.val);
+            document.querySelectorAll('#star-rating span').forEach(s => {
+                if (parseInt(s.dataset.val) <= currentRating) s.classList.add('active');
+                else s.classList.remove('active');
+            });
+        });
+    });
+
+    window.submitReview = async () => {
+        const name = document.getElementById('review-name').value;
+        const comment = document.getElementById('review-comment').value;
+        const btn = document.getElementById('btn-submit-review');
+
+        if (!name || !comment) {
+            alert("Please fill in all fields.");
+            return;
+        }
+
+        btn.textContent = "Submitting...";
+        btn.disabled = true;
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/submit-review`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, rating: currentRating, comment })
+            });
+
+            if (!res.ok) throw new Error("Failed to submit review");
+            
+            closeReviewModal();
+            document.getElementById('review-name').value = '';
+            document.getElementById('review-comment').value = '';
+            loadReviews(); // Refresh reviews
+        } catch (err) {
+            alert("Failed to submit review. Is the backend running?");
+        } finally {
+            btn.textContent = "Submit Review";
+            btn.disabled = false;
+        }
     };
 
     // --- Authentication & Dashboard Logic ---

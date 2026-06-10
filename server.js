@@ -16,6 +16,10 @@ app.use(express.static(__dirname));
 // In-memory databases
 let payments = [];
 let users = []; // Store users { mobile, name, password }
+let reviews = [
+    { id: '1', name: 'Rohan Sharma', rating: 5, comment: 'Anshul built an incredible e-commerce platform for my business. Very professional and fast delivery!', date: new Date().toISOString() },
+    { id: '2', name: 'Priya Patel', rating: 5, comment: 'The UI/UX design is top-notch. Highly recommend Anshul for any custom web application needs.', date: new Date().toISOString() }
+];
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "anshul123";
 const JWT_SECRET = "supersecretjwtkey"; // For demo purposes
 // --- CUSTOMER ENDPOINTS ---
@@ -69,14 +73,39 @@ app.post('/submit-payment', (req, res) => {
 // 2. Customer Logs In
 app.post('/login', (req, res) => {
     const { mobile, password } = req.body;
-    const user = users.find(u => u.mobile === mobile && u.password === password);
-    
-    if (!user) {
-        return res.status(401).json({ error: "Invalid mobile number or password" });
+    const user = users.find(u => u.mobile === mobile);
+    if (!user || user.password !== password) {
+        return res.status(401).json({ error: "Invalid mobile or password" });
+    }
+    const token = jwt.sign({ mobile: user.mobile, name: user.name }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token, name: user.name });
+});
+
+// --- REVIEWS API ---
+
+// Get all reviews
+app.get('/reviews', (req, res) => {
+    res.json(reviews);
+});
+
+// Submit a new review
+app.post('/submit-review', (req, res) => {
+    const { name, rating, comment } = req.body;
+    if (!name || !rating || !comment) {
+        return res.status(400).json({ error: "Missing required fields" });
     }
     
-    const token = jwt.sign({ mobile: user.mobile, name: user.name }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, message: "Logged in successfully" });
+    const newReview = {
+        id: crypto.randomBytes(4).toString('hex'),
+        name,
+        rating: parseInt(rating),
+        comment,
+        date: new Date().toISOString()
+    };
+    
+    // Add to beginning of array
+    reviews.unshift(newReview);
+    res.json({ message: "Review submitted successfully", review: newReview });
 });
 
 // 3. Customer Gets Their Profile & Payments

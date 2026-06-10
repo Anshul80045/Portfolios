@@ -120,6 +120,19 @@
         </div>
     </section>
 
+    <!-- Reviews Section -->
+    <section id="reviews" class="section dark-section">
+        <div class="section-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                <h2 class="section-title" style="margin: 0;">Client Reviews</h2>
+                <button class="btn-primary" onclick="openReviewModal()">Leave a Review</button>
+            </div>
+            <div id="reviews-grid" class="reviews-grid">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </section>
+
     <!-- Contact Section -->
     <section id="contact" class="section dark-section">
         <div class="section-container contact-container">
@@ -236,6 +249,32 @@
             <p style="font-size: 1.1rem; margin-bottom: 1rem;">Please check your dashboard for confirmation.</p>
             <p>Thank you! Your advance payment has been received and development will begin shortly.</p>
             <button class="btn-primary" style="margin-top: 1.5rem;" onclick="closeSuccessModal()">Go to Dashboard</button>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div id="review-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 500px;">
+            <h2>Leave a Review</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Share your experience working with Anshul.</p>
+            <div class="form-group full-width" style="text-align: left; margin-bottom: 1rem;">
+                <label for="review-name">Your Name *</label>
+                <input type="text" id="review-name" required placeholder="John Doe" style="width: 100%;">
+            </div>
+            <div class="form-group full-width" style="text-align: left; margin-bottom: 1rem;">
+                <label>Rating *</label>
+                <div id="star-rating" class="star-rating">
+                    <span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span>
+                </div>
+            </div>
+            <div class="form-group full-width" style="text-align: left; margin-bottom: 1.5rem;">
+                <label for="review-comment">Your Comment *</label>
+                <textarea id="review-comment" required rows="4" placeholder="Tell us about your project and the delivery..." style="width: 100%;"></textarea>
+            </div>
+            <div class="payment-methods" style="margin-top: 1rem;">
+                <button class="btn-primary" id="btn-submit-review" onclick="submitReview()">Submit Review</button>
+                <button class="btn-close" onclick="closeReviewModal()" style="margin-top: 1rem;">Cancel</button>
+            </div>
         </div>
     </div>
 
