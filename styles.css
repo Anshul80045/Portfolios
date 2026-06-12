@@ -427,6 +427,29 @@ h1, h2, h3, h4 {
     letter-spacing: 0.5px;
 }
 
+/* Review Modal Star Selector */
+.star-rating {
+    display: flex;
+    gap: 0.8rem;
+    font-size: 2.5rem;
+    color: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+.star-rating span {
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.star-rating span:hover,
+.star-rating span.active {
+    color: #f59e0b;
+    transform: scale(1.2);
+    text-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+}
+
 /* Projects Grid */
 .projects-grid {
     display: grid;

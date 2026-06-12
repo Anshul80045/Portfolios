@@ -17,8 +17,13 @@ app.use(express.static(__dirname));
 let payments = [];
 let users = []; // Store users { mobile, name, password }
 let reviews = [
-    { id: '1', name: 'Rohan Sharma', rating: 5, comment: 'Anshul built an incredible e-commerce platform for my business. Very professional and fast delivery!', date: new Date().toISOString() },
-    { id: '2', name: 'Priya Patel', rating: 5, comment: 'The UI/UX design is top-notch. Highly recommend Anshul for any custom web application needs.', date: new Date().toISOString() }
+    { id: '7', name: 'Vikram Mehta', rating: 5, comment: 'Anshul completely transformed our outdated website into a modern, high-converting platform. His attention to detail and ability to understand our business needs was exceptional. The project was delivered ahead of schedule!', date: new Date(Date.now() - 1 * 86400000).toISOString() },
+    { id: '6', name: 'Neha Gupta', rating: 5, comment: 'I hired Anshul to build a custom dashboard for our logistics company. The UI is incredibly intuitive, and the backend is rock solid. He is definitely one of the best freelance developers I have worked with.', date: new Date(Date.now() - 3 * 86400000).toISOString() },
+    { id: '5', name: 'Rahul Desai', rating: 4, comment: 'Great communication and solid technical skills. Anshul built our e-commerce store from scratch and integrated all the payment gateways flawlessly. Very happy with the final product.', date: new Date(Date.now() - 7 * 86400000).toISOString() },
+    { id: '4', name: 'Sarah Williams', rating: 5, comment: 'Working with Anshul was a breeze. He took our basic Figma designs and turned them into a pixel-perfect, fully responsive web application. His React and Node.js skills are top-tier.', date: new Date(Date.now() - 14 * 86400000).toISOString() },
+    { id: '3', name: 'Amit Chawla', rating: 5, comment: 'Highly professional and dedicated. Anshul not only delivered exactly what we asked for but also suggested SEO and performance improvements that significantly boosted our site speed.', date: new Date(Date.now() - 20 * 86400000).toISOString() },
+    { id: '2', name: 'Priya Patel', rating: 5, comment: 'The UI/UX design is top-notch. Highly recommend Anshul for any custom web application needs. He is responsive and very easy to work with.', date: new Date(Date.now() - 30 * 86400000).toISOString() },
+    { id: '1', name: 'Rohan Sharma', rating: 5, comment: 'Anshul built an incredible e-commerce platform for my business. Very professional and fast delivery! Will definitely hire again.', date: new Date(Date.now() - 45 * 86400000).toISOString() }
 ];
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "anshul123";
 const JWT_SECRET = "supersecretjwtkey"; // For demo purposes
