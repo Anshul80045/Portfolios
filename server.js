@@ -6,6 +6,9 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 
 const app = express();
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "anshul2268";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "226812@a";
+
 app.use(cors());
 app.use(express.json());
 
@@ -28,7 +31,6 @@ let reviews = [
     { id: '2', name: 'Priya Patel', rating: 5, comment: 'The UI/UX design is top-notch. Highly recommend Anshul for any custom web application needs. He is responsive and very easy to work with.', date: new Date(Date.now() - 30 * 86400000).toISOString() },
     { id: '1', name: 'Rohan Sharma', rating: 5, comment: 'Anshul built an incredible e-commerce platform for my business. Very professional and fast delivery! Will definitely hire again.', date: new Date(Date.now() - 45 * 86400000).toISOString() }
 ];
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "anshul123";
 const JWT_SECRET = "supersecretjwtkey"; // For demo purposes
 // --- CUSTOMER ENDPOINTS ---
 
@@ -127,10 +129,12 @@ app.get('/me', verifyCustomer, (req, res) => {
 
 // --- ADMIN ENDPOINTS ---
 
-// Middleware to check Admin Password
+// --- ADMIN MIDDLEWARE ---
 const verifyAdmin = (req, res, next) => {
+    const user = req.headers['x-admin-username'];
     const pass = req.headers['x-admin-password'];
-    if (pass !== ADMIN_PASSWORD) {
+    
+    if (user !== ADMIN_USERNAME || pass !== ADMIN_PASSWORD) {
         return res.status(401).json({ error: "Unauthorized" });
     }
     next();
@@ -228,5 +232,6 @@ app.get('/admin/chats', verifyAdmin, (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Backend server running securely on http://localhost:${PORT}`);
+    console.log(`Admin Username is: ${ADMIN_USERNAME}`);
     console.log(`Admin Password is: ${ADMIN_PASSWORD}`);
 });
