@@ -471,6 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // CUSTOM LIVE CHAT LOGIC
     // ==========================================
     
+    const chatOverlay = document.getElementById('chat-overlay');
     const chatToggleBtn = document.getElementById('chat-toggle-btn');
     const chatWindow = document.getElementById('chat-window');
     const chatCloseBtn = document.getElementById('chat-close-btn');
@@ -490,18 +491,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Toggle Window
     chatToggleBtn.addEventListener('click', () => {
-        chatWindow.style.display = chatWindow.style.display === 'none' ? 'flex' : 'none';
-        if (chatWindow.style.display === 'flex') {
+        const isOpening = chatWindow.style.display === 'none';
+        chatWindow.style.display = isOpening ? 'flex' : 'none';
+        chatOverlay.style.display = isOpening ? 'block' : 'none';
+        
+        // Lock background scrolling on mobile
+        if (window.innerWidth <= 768) {
+            document.body.style.overflow = isOpening ? 'hidden' : '';
+        }
+
+        if (isOpening) {
             checkChatState();
         } else {
             clearInterval(chatPollInterval);
         }
     });
 
-    chatCloseBtn.addEventListener('click', () => {
+    function closeChat() {
         chatWindow.style.display = 'none';
+        chatOverlay.style.display = 'none';
+        document.body.style.overflow = '';
         clearInterval(chatPollInterval);
-    });
+    }
+
+    chatCloseBtn.addEventListener('click', closeChat);
+    chatOverlay.addEventListener('click', closeChat);
 
     function checkChatState() {
         if (chatSessionId && chatCustomerName) {

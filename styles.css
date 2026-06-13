@@ -795,6 +795,19 @@ footer {
 }
 
 /* Custom Live Chat Widget */
+.chat-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 999; /* Just below the chat widget */
+    transition: all 0.3s ease;
+}
+
 .custom-chat-widget {
     position: fixed;
     bottom: 30px;
@@ -845,6 +858,7 @@ footer {
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
     transform-origin: bottom right;
     animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overscroll-behavior: contain; /* Prevents scroll chaining */
 }
 
 @keyframes popIn {
@@ -891,6 +905,7 @@ footer {
     flex-grow: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none; /* Completely blocks background scrolling when interacting with chat */
     margin-bottom: 1rem;
     display: flex;
     flex-direction: column;
