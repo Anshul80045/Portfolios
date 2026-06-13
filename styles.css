@@ -880,6 +880,7 @@ footer {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+    min-height: 0;
 }
 
 .chat-setup {
@@ -889,10 +890,12 @@ footer {
 .chat-messages {
     flex-grow: 1;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     margin-bottom: 1rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    min-height: 0;
 }
 
 .chat-messages::-webkit-scrollbar {
@@ -1167,5 +1170,13 @@ footer {
         width: 90%;
         max-width: 350px;
         border-radius: 16px;
+    }
+
+    /* Custom Chat Window Fix */
+    .chat-window {
+        width: calc(100vw - 40px);
+        max-width: 350px;
+        height: 60vh;
+        max-height: 450px;
     }
 }
