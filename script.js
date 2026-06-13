@@ -467,4 +467,133 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // ==========================================
+    // CUSTOM LIVE CHAT LOGIC
+    // ==========================================
+    
+    const chatToggleBtn = document.getElementById('chat-toggle-btn');
+    const chatWindow = document.getElementById('chat-window');
+    const chatCloseBtn = document.getElementById('chat-close-btn');
+    
+    const chatSetup = document.getElementById('chat-setup');
+    const chatCustomerNameInput = document.getElementById('chat-customer-name');
+    const chatStartBtn = document.getElementById('chat-start-btn');
+    
+    const chatMessagesContainer = document.getElementById('chat-messages-container');
+    const chatMessagesDiv = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const chatSendBtn = document.getElementById('chat-send-btn');
+
+    let chatSessionId = localStorage.getItem('chatSessionId');
+    let chatCustomerName = localStorage.getItem('chatCustomerName');
+    let chatPollInterval = null;
+
+    // Toggle Window
+    chatToggleBtn.addEventListener('click', () => {
+        chatWindow.style.display = chatWindow.style.display === 'none' ? 'flex' : 'none';
+        if (chatWindow.style.display === 'flex') {
+            checkChatState();
+        } else {
+            clearInterval(chatPollInterval);
+        }
+    });
+
+    chatCloseBtn.addEventListener('click', () => {
+        chatWindow.style.display = 'none';
+        clearInterval(chatPollInterval);
+    });
+
+    function checkChatState() {
+        if (chatSessionId && chatCustomerName) {
+            chatSetup.style.display = 'none';
+            chatMessagesContainer.style.display = 'flex';
+            loadChatMessages();
+            startPolling();
+        } else {
+            chatSetup.style.display = 'flex';
+            chatMessagesContainer.style.display = 'none';
+        }
+    }
+
+    // Start Chat
+    chatStartBtn.addEventListener('click', () => {
+        const name = chatCustomerNameInput.value.trim();
+        if (!name) return alert("Please enter your name.");
+        
+        chatCustomerName = name;
+        chatSessionId = 'sess_' + Date.now() + Math.random().toString(36).substr(2, 5);
+        
+        localStorage.setItem('chatCustomerName', chatCustomerName);
+        localStorage.setItem('chatSessionId', chatSessionId);
+        
+        checkChatState();
+    });
+
+    // Load Messages
+    async function loadChatMessages() {
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/chat/${chatSessionId}`);
+            if (!res.ok) return;
+            const data = await res.json();
+            renderMessages(data.messages);
+        } catch (err) {
+            console.error("Chat Error:", err);
+        }
+    }
+
+    function renderMessages(messages) {
+        if (!messages || messages.length === 0) {
+            chatMessagesDiv.innerHTML = '<p style="text-align: center; color: var(--text-secondary); font-size: 0.8rem; margin-top: 1rem;">Send a message to start chatting!</p>';
+            return;
+        }
+
+        chatMessagesDiv.innerHTML = messages.map(m => {
+            const isMe = !m.isAdmin;
+            return `
+                <div class="chat-msg ${isMe ? 'customer' : 'admin'}">
+                    <div class="msg-sender">${m.sender}</div>
+                    ${m.text}
+                </div>
+            `;
+        }).join('');
+        
+        // Scroll to bottom
+        chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+    }
+
+    // Send Message
+    async function sendMessage() {
+        const text = chatInput.value.trim();
+        if (!text) return;
+        
+        chatInput.value = '';
+        
+        try {
+            await fetch(`${API_BASE_URL}/api/chat/send`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sessionId: chatSessionId,
+                    name: chatCustomerName,
+                    text: text,
+                    isAdmin: false
+                })
+            });
+            loadChatMessages();
+        } catch (err) {
+            console.error("Failed to send message", err);
+        }
+    }
+
+    chatSendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+
+    // Polling
+    function startPolling() {
+        clearInterval(chatPollInterval);
+        chatPollInterval = setInterval(loadChatMessages, 3000);
+    }
+
 });

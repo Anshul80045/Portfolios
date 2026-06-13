@@ -318,13 +318,41 @@
     <script src="data.js"></script>
     <script src="script.js"></script>
 
-    <!-- Floating WhatsApp Widget -->
-    <a href="https://wa.me/919305727780?text=Hi%20Anshul,%20I%20was%20looking%20at%20your%20portfolio%20and%20want%20to%20discuss%20a%20website%20project." target="_blank" class="whatsapp-float">
-        <svg viewBox="0 0 32 32" width="32" height="32" fill="white">
-            <path d="M16 2a13 13 0 00-11 20l-2 6 6-2a13 13 0 107-24zm0 24a11 11 0 01-5-1l-3 1 1-3a11 11 0 117 3z"/>
-            <path d="M12 9c0-1-1-1-1-1l-2 1c-1 1-1 3 0 5s3 5 5 7 4 1 5 0l2-2c0-1 0-1-1-1l-3-1-1 1-1 1s-2-1-3-3-1-3-1-3l1-1 1-1-1-3z"/>
-        </svg>
-        <span class="whatsapp-tooltip">Chat with me!</span>
-    </a>
+    <!-- Custom Live Chat Widget -->
+    <div class="custom-chat-widget">
+        <!-- Floating Chat Button -->
+        <button id="chat-toggle-btn" class="chat-toggle-btn">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        </button>
+
+        <!-- Chat Window -->
+        <div id="chat-window" class="chat-window" style="display: none;">
+            <div class="chat-header">
+                <div>
+                    <h3 style="margin: 0; font-size: 1rem;">Chat with Anshul</h3>
+                    <span style="font-size: 0.8rem; color: #a5b4fc;">Typically replies in a few minutes</span>
+                </div>
+                <button id="chat-close-btn" class="chat-close-btn">&times;</button>
+            </div>
+            
+            <div id="chat-setup" class="chat-setup">
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">Hi! I'm currently online. What's your name?</p>
+                <input type="text" id="chat-customer-name" placeholder="Enter your name" style="width: 100%; box-sizing: border-box; margin-bottom: 0.5rem;">
+                <button id="chat-start-btn" class="btn-primary" style="width: 100%; padding: 0.5rem;">Start Chat</button>
+            </div>
+
+            <div id="chat-messages-container" class="chat-messages-container" style="display: none;">
+                <div id="chat-messages" class="chat-messages">
+                    <!-- Messages go here -->
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="Type a message...">
+                    <button id="chat-send-btn">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

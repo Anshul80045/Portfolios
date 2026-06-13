@@ -14,6 +14,9 @@ const path = require('path');
 app.use(express.static(__dirname));
 
 // In-memory databases
+// --- IN-MEMORY CHAT STORAGE ---
+// Format: { sessionId: { name: 'Customer', messages: [{ sender: 'Customer', text: 'Hi', timestamp: 123, isAdmin: false }] } }
+let chatSessions = {};
 let payments = [];
 let users = []; // Store users { mobile, name, password }
 let reviews = [
@@ -163,6 +166,63 @@ app.post('/admin/reject/:id', verifyAdmin, (req, res) => {
     
     payment.status = 'rejected';
     res.json({ message: "Payment rejected" });
+});
+
+// ==========================================
+// LIVE CHAT API ENDPOINTS
+// ==========================================
+
+// 1. Send Message (Customer or Admin)
+app.post('/api/chat/send', (req, res) => {
+    const { sessionId, name, text, isAdmin } = req.body;
+    
+    if (!sessionId || !text) {
+        return res.status(400).json({ error: "Missing sessionId or text" });
+    }
+
+    if (!chatSessions[sessionId]) {
+        chatSessions[sessionId] = {
+            name: name || 'Anonymous User',
+            lastActive: Date.now(),
+            messages: []
+        };
+    }
+
+    // Update name if customer provided it later
+    if (name && !isAdmin) {
+        chatSessions[sessionId].name = name;
+    }
+
+    const message = {
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
+        sender: isAdmin ? 'Anshul (Admin)' : chatSessions[sessionId].name,
+        text,
+        timestamp: Date.now(),
+        isAdmin: isAdmin || false
+    };
+
+    chatSessions[sessionId].messages.push(message);
+    chatSessions[sessionId].lastActive = Date.now();
+    
+    res.json({ success: true, message });
+});
+
+// 2. Get Messages for a Session (Customer)
+app.get('/api/chat/:sessionId', (req, res) => {
+    const session = chatSessions[req.params.sessionId];
+    if (!session) return res.json({ messages: [] });
+    res.json({ messages: session.messages });
+});
+
+// 3. Get All Chats (Admin Only)
+app.get('/admin/chats', verifyAdmin, (req, res) => {
+    // Return sessions sorted by most recently active
+    const sessionsArray = Object.entries(chatSessions).map(([id, data]) => ({
+        sessionId: id,
+        ...data
+    })).sort((a, b) => b.lastActive - a.lastActive);
+    
+    res.json(sessionsArray);
 });
 
 const PORT = process.env.PORT || 3000;

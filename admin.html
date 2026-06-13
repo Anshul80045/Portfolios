@@ -3,130 +3,289 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Live Chat Admin Panel</title>
     <style>
-        body { font-family: 'Inter', sans-serif; background: #0f172a; color: white; margin: 0; padding: 2rem; }
-        .container { max-width: 1000px; margin: 0 auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid #334155; padding-bottom: 1rem; }
-        .card { background: #1e293b; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
-        .details h3 { margin: 0 0 0.5rem 0; color: #3b82f6; }
-        .details p { margin: 0.25rem 0; color: #cbd5e1; font-size: 0.9rem; }
-        .badge { padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
-        .pending { background: #f59e0b22; color: #f59e0b; border: 1px solid #f59e0b; }
-        .approved { background: #10b98122; color: #10b981; border: 1px solid #10b981; }
-        .completed { background: #3b82f622; color: #3b82f6; border: 1px solid #3b82f6; }
-        .actions { display: flex; gap: 1rem; }
-        button { border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn-approve { background: #10b981; color: white; }
-        .btn-approve:hover { background: #059669; }
-        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .login-box { background: #1e293b; padding: 2rem; border-radius: 8px; text-align: center; border: 1px solid #334155; }
-        .login-box input { padding: 0.75rem; border-radius: 4px; border: 1px solid #475569; background: #0f172a; color: white; margin-bottom: 1rem; width: 100%; }
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --border-color: #334155;
+            --accent: #3b82f6;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+        }
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 300px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0,0,0,0.2);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .session-list {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .session-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .session-item:hover, .session-item.active {
+            background: rgba(59, 130, 246, 0.2);
+        }
+        .chat-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-primary);
+        }
+        .chat-messages {
+            flex-grow: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .chat-msg {
+            max-width: 70%;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            line-height: 1.4;
+        }
+        .chat-msg.customer {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+        .chat-msg.admin {
+            background: var(--accent);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+        .msg-sender {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.3rem;
+            font-weight: bold;
+        }
+        .chat-msg.admin .msg-sender {
+            color: rgba(255,255,255,0.8);
+        }
+        .chat-input-area {
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 1rem;
+        }
+        .chat-input-area input {
+            flex-grow: 1;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-primary);
+            color: white;
+            font-size: 1rem;
+        }
+        .chat-input-area button {
+            padding: 0 2rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        #login-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .login-box {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
     </style>
 </head>
 <body>
 
+    <!-- Login Overlay -->
     <div id="login-overlay">
         <div class="login-box">
             <h2>Admin Login</h2>
-            <input type="password" id="admin-pass" placeholder="Enter Password">
-            <button class="btn-approve" onclick="login()">Login</button>
+            <input type="password" id="admin-password" placeholder="Enter Admin Password" style="padding: 0.8rem; border-radius: 4px; border: 1px solid #334155; margin-bottom: 1rem; width: 250px;">
+            <br>
+            <button onclick="login()" style="padding: 0.8rem 2rem; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">Login</button>
         </div>
     </div>
 
-    <div class="container">
-        <div class="header">
-            <h1>Admin Dashboard</h1>
-            <button onclick="fetchPayments()" style="background: #334155; color: white;">Refresh</button>
+    <!-- Main Layout -->
+    <div class="sidebar">
+        <div class="header">Active Chats</div>
+        <div class="session-list" id="session-list">
+            <!-- Sessions injected via JS -->
         </div>
-        <div id="payments-list">
-            <!-- Populated via JS -->
+    </div>
+    
+    <div class="chat-area" id="chat-area" style="display: none;">
+        <div class="header" id="current-chat-header">Select a chat</div>
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages injected via JS -->
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Type your reply...">
+            <button id="chat-send-btn">Send</button>
         </div>
     </div>
 
     <script>
-        // IMPORTANT: Leave this as an empty string when the backend serves the frontend files!
-        const API_BASE_URL = '';
-        let adminPassword = "";
+        // Use relative URL so it works locally and on Render
+        const API_BASE_URL = window.location.origin;
+        let adminPassword = '';
+        let currentSessionId = null;
+        let chatPollInterval = null;
 
         function login() {
-            adminPassword = document.getElementById('admin-pass').value;
+            const pass = document.getElementById('admin-password').value;
+            if(!pass) return;
+            adminPassword = pass;
             document.getElementById('login-overlay').style.display = 'none';
-            fetchPayments();
-            // Auto refresh every 5 seconds
-            setInterval(fetchPayments, 5000);
+            
+            // Start polling sessions
+            loadSessions();
+            setInterval(loadSessions, 5000);
         }
 
-        async function fetchPayments() {
+        async function loadSessions() {
             try {
-                const res = await fetch(`${API_BASE_URL}/admin/payments`, {
+                const res = await fetch(`${API_BASE_URL}/admin/chats`, {
                     headers: { 'x-admin-password': adminPassword }
                 });
-                if (!res.ok) {
-                    alert("Unauthorized!");
+                
+                if (res.status === 401) {
+                    alert("Wrong Password");
                     document.getElementById('login-overlay').style.display = 'flex';
                     return;
                 }
-                const payments = await res.json();
-                renderPayments(payments);
+
+                const sessions = await res.json();
+                renderSessions(sessions);
             } catch (err) {
-                console.error(err);
+                console.error("Failed to load sessions", err);
             }
         }
 
-        async function approve(id) {
-            try {
-                await fetch(`${API_BASE_URL}/admin/approve/${id}`, {
-                    method: 'POST',
-                    headers: { 'x-admin-password': adminPassword }
-                });
-                fetchPayments();
-            } catch (err) {
-                alert("Error approving payment");
-            }
-        }
-
-        async function completeProject(id) {
-            try {
-                await fetch(`${API_BASE_URL}/admin/complete/${id}`, {
-                    method: 'POST',
-                    headers: { 'x-admin-password': adminPassword }
-                });
-                fetchPayments();
-            } catch (err) {
-                alert("Error marking project as completed");
-            }
-        }
-
-        function renderPayments(payments) {
-            const list = document.getElementById('payments-list');
-            list.innerHTML = '';
-            
-            if(payments.length === 0) {
-                list.innerHTML = '<p>No payments yet.</p>';
+        function renderSessions(sessions) {
+            const list = document.getElementById('session-list');
+            if(sessions.length === 0) {
+                list.innerHTML = '<p style="padding: 1rem; color: #94a3b8;">No active chats.</p>';
                 return;
             }
 
-            payments.forEach(p => {
-                const isPending = p.status === 'pending';
-                const isApproved = p.status === 'approved';
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <div class="details">
-                        <h3>${p.name} - ₹${p.amount} <span class="badge ${p.status}">${p.status}</span></h3>
-                        <p><strong>Mobile:</strong> ${p.mobile} | <strong>Plan:</strong> ${p.plan}</p>
-                        <p style="background: rgba(255,255,255,0.05); padding: 0.75rem; border-radius: 6px; margin: 0.5rem 0; border-left: 3px solid #3b82f6;"><strong>Description:</strong> ${p.description}</p>
-                        <p><em>${new Date(p.timestamp).toLocaleString()}</em></p>
-                    </div>
-                    <div class="actions">
-                        ${isPending ? `<button class="btn-approve" onclick="approve('${p.id}')">I Got The Payment</button>` : ''}
-                        ${isApproved ? `<button style="background: #3b82f6; color: white;" onclick="completeProject('${p.id}')">Website Completed Successfully</button>` : ''}
+            let html = '';
+            sessions.forEach(s => {
+                const lastMsg = s.messages.length > 0 ? s.messages[s.messages.length-1].text : 'No messages';
+                const date = new Date(s.lastActive).toLocaleTimeString();
+                html += `
+                    <div class="session-item ${currentSessionId === s.sessionId ? 'active' : ''}" onclick="selectChat('${s.sessionId}', '${s.name}')">
+                        <div style="font-weight: bold; margin-bottom: 0.2rem;">${s.name}</div>
+                        <div style="font-size: 0.8rem; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${lastMsg}</div>
+                        <div style="font-size: 0.7rem; color: #64748b; margin-top: 0.2rem;">Last active: ${date}</div>
                     </div>
                 `;
-                list.appendChild(card);
             });
+            list.innerHTML = html;
+        }
+
+        function selectChat(sessionId, name) {
+            currentSessionId = sessionId;
+            document.getElementById('chat-area').style.display = 'flex';
+            document.getElementById('current-chat-header').textContent = `Chatting with: ${name}`;
+            
+            // Load messages
+            loadMessages();
+            
+            // Start polling for this specific chat
+            clearInterval(chatPollInterval);
+            chatPollInterval = setInterval(loadMessages, 3000);
+        }
+
+        async function loadMessages() {
+            if(!currentSessionId) return;
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/chat/${currentSessionId}`);
+                const data = await res.json();
+                renderMessages(data.messages);
+            } catch(e) {
+                console.error("Failed to load messages", e);
+            }
+        }
+
+        function renderMessages(messages) {
+            const container = document.getElementById('chat-messages');
+            container.innerHTML = messages.map(m => `
+                <div class="chat-msg ${m.isAdmin ? 'admin' : 'customer'}">
+                    <div class="msg-sender">${m.sender}</div>
+                    ${m.text}
+                </div>
+            `).join('');
+            
+            // Auto scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        document.getElementById('chat-send-btn').addEventListener('click', sendMessage);
+        document.getElementById('chat-input').addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') sendMessage();
+        });
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if(!text || !currentSessionId) return;
+
+            input.value = '';
+
+            try {
+                await fetch(`${API_BASE_URL}/api/chat/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: currentSessionId,
+                        text: text,
+                        isAdmin: true
+                    })
+                });
+                loadMessages();
+            } catch(e) {
+                console.error("Failed to send message", e);
+            }
         }
     </script>
 </body>
