@@ -530,7 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Start Chat
-    chatStartBtn.addEventListener('click', () => {
+    function startChatFlow() {
         const name = chatCustomerNameInput.value.trim();
         if (!name) return alert("Please enter your name.");
         
@@ -541,6 +541,11 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('chatSessionId', chatSessionId);
         
         checkChatState();
+    }
+
+    chatStartBtn.addEventListener('click', startChatFlow);
+    chatCustomerNameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') startChatFlow();
     });
 
     // Load Messages

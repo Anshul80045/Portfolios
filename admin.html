@@ -188,6 +188,13 @@
             setInterval(loadSessions, 5000);
         }
 
+        document.getElementById('admin-password').addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') login();
+        });
+        document.getElementById('admin-username').addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') document.getElementById('admin-password').focus();
+        });
+
         async function loadSessions() {
             try {
                 const res = await fetch(`${API_BASE_URL}/admin/chats`, {
