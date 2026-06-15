@@ -7,14 +7,20 @@ const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 
 const app = express();
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "anshul2268";
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "226812@a";
+
+// Securely loading credentials from Environment Variables (No hardcoding!)
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "admin";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
+const MONGO_URI = process.env.MONGO_URI;
 
 // Connect to MongoDB
-const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://anshul:anshul123@anshulchat.ndrnl0v.mongodb.net/portfolio?retryWrites=true&w=majority&appName=Anshulchat";
-mongoose.connect(MONGO_URI)
-    .then(() => console.log('Connected to MongoDB for Permanent Chat'))
-    .catch(err => console.error('MongoDB connection error:', err));
+if (MONGO_URI) {
+    mongoose.connect(MONGO_URI)
+        .then(() => console.log('Connected to MongoDB for Permanent Chat'))
+        .catch(err => console.error('MongoDB connection error:', err));
+} else {
+    console.error("WARNING: MONGO_URI is missing in Environment Variables!");
+}
 
 app.use(cors());
 app.use(express.json());
