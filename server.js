@@ -4,22 +4,38 @@ const express = require('express');
 const cors = require('cors');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 
 const app = express();
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || "anshul2268";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "226812@a";
 
+// Connect to MongoDB
+const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://anshul:anshul123@anshulchat.ndrnl0v.mongodb.net/portfolio?retryWrites=true&w=majority&appName=Anshulchat";
+mongoose.connect(MONGO_URI)
+    .then(() => console.log('Connected to MongoDB for Permanent Chat'))
+    .catch(err => console.error('MongoDB connection error:', err));
+
 app.use(cors());
 app.use(express.json());
-
-// Serve static frontend files (index.html, script.js, style.css, etc.)
-const path = require('path');
 app.use(express.static(__dirname));
 
-// In-memory databases
-// --- IN-MEMORY CHAT STORAGE ---
-// Format: { sessionId: { name: 'Customer', messages: [{ sender: 'Customer', text: 'Hi', timestamp: 123, isAdmin: false }] } }
-let chatSessions = {};
+// --- MONGODB MODELS ---
+const chatSessionSchema = new mongoose.Schema({
+    sessionId: { type: String, required: true, unique: true },
+    name: { type: String, required: true },
+    lastActive: { type: Number, default: Date.now },
+    messages: [{
+        id: String,
+        sender: String,
+        text: String,
+        timestamp: Number,
+        isAdmin: Boolean
+    }]
+});
+const ChatSession = mongoose.model('ChatSession', chatSessionSchema);
+
+// In-memory databases (for non-chat features)
 let payments = [];
 let users = []; // Store users { mobile, name, password }
 let reviews = [
@@ -173,60 +189,75 @@ app.post('/admin/reject/:id', verifyAdmin, (req, res) => {
 });
 
 // ==========================================
-// LIVE CHAT API ENDPOINTS
+// LIVE CHAT API ENDPOINTS (MONGODB)
 // ==========================================
 
 // 1. Send Message (Customer or Admin)
-app.post('/api/chat/send', (req, res) => {
-    const { sessionId, name, text, isAdmin } = req.body;
-    
-    if (!sessionId || !text) {
-        return res.status(400).json({ error: "Missing sessionId or text" });
-    }
+app.post('/api/chat/send', async (req, res) => {
+    try {
+        const { sessionId, name, text, isAdmin } = req.body;
+        
+        if (!sessionId || !text) {
+            return res.status(400).json({ error: "Missing sessionId or text" });
+        }
 
-    if (!chatSessions[sessionId]) {
-        chatSessions[sessionId] = {
-            name: name || 'Anonymous User',
-            lastActive: Date.now(),
-            messages: []
+        let session = await ChatSession.findOne({ sessionId });
+        
+        if (!session) {
+            session = new ChatSession({
+                sessionId,
+                name: name || 'Anonymous User',
+                lastActive: Date.now(),
+                messages: []
+            });
+        }
+
+        // Update name if customer provided it later
+        if (name && !isAdmin) {
+            session.name = name;
+        }
+
+        const message = {
+            id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
+            sender: isAdmin ? 'Anshul (Admin)' : session.name,
+            text,
+            timestamp: Date.now(),
+            isAdmin: isAdmin || false
         };
+
+        session.messages.push(message);
+        session.lastActive = Date.now();
+        await session.save();
+        
+        res.json({ success: true, message });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to send message" });
     }
-
-    // Update name if customer provided it later
-    if (name && !isAdmin) {
-        chatSessions[sessionId].name = name;
-    }
-
-    const message = {
-        id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
-        sender: isAdmin ? 'Anshul (Admin)' : chatSessions[sessionId].name,
-        text,
-        timestamp: Date.now(),
-        isAdmin: isAdmin || false
-    };
-
-    chatSessions[sessionId].messages.push(message);
-    chatSessions[sessionId].lastActive = Date.now();
-    
-    res.json({ success: true, message });
 });
 
 // 2. Get Messages for a Session (Customer)
-app.get('/api/chat/:sessionId', (req, res) => {
-    const session = chatSessions[req.params.sessionId];
-    if (!session) return res.json({ messages: [] });
-    res.json({ messages: session.messages });
+app.get('/api/chat/:sessionId', async (req, res) => {
+    try {
+        const session = await ChatSession.findOne({ sessionId: req.params.sessionId });
+        if (!session) return res.json({ messages: [] });
+        res.json({ messages: session.messages });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to fetch messages" });
+    }
 });
 
 // 3. Get All Chats (Admin Only)
-app.get('/admin/chats', verifyAdmin, (req, res) => {
-    // Return sessions sorted by most recently active
-    const sessionsArray = Object.entries(chatSessions).map(([id, data]) => ({
-        sessionId: id,
-        ...data
-    })).sort((a, b) => b.lastActive - a.lastActive);
-    
-    res.json(sessionsArray);
+app.get('/admin/chats', verifyAdmin, async (req, res) => {
+    try {
+        // Return sessions sorted by most recently active
+        const sessions = await ChatSession.find().sort({ lastActive: -1 });
+        res.json(sessions);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to fetch chats" });
+    }
 });
 
 const PORT = process.env.PORT || 3000;
